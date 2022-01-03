@@ -1,4 +1,7 @@
 version: '3'
+networks:
+  luby-cash:
+    external: true
 services:
   database:
     image: postgres
@@ -8,6 +11,8 @@ services:
       POSTGRES_DB: luby_cash
     ports:
       - '5433:5432'
+    networks:
+      - luby-cash
   app:
     depends_on:
       - database
@@ -17,3 +22,5 @@ services:
       - '3333:3333'
     volumes:
       - .:/usr/app
+    networks:
+      - luby-cash
