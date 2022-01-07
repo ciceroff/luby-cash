@@ -25,6 +25,9 @@ Route.post('/login','AuthController.login')
 Route.post('/users', 'UsersController.store')
 
 Route.group(() => {
+    // CLIENTS
+    Route.post('/clients', 'ClientsController.store')
+    Route.get('/clients', 'ClientsController.index').middleware('admin')
     // USER
     Route.get('/users', 'UsersController.index').middleware('admin')
     Route.get('/users/:id','UsersController.show')
