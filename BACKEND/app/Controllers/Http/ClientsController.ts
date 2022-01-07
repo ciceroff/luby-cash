@@ -3,7 +3,8 @@ import User from 'App/Models/User';
 import { Kafka } from 'kafkajs'
 import Axios from 'axios'
 export default class ClientsController {
-  public async store({request, auth}: HttpContextContract){
+  public async store({request, response, auth}: HttpContextContract){
+    const userId = auth.use('api').user?.id
     const {
       full_name,
       email,
@@ -20,7 +21,9 @@ export default class ClientsController {
     const kafka = new Kafka({
       brokers: ['kafka:29092'],
     });
-
+    if(auth.use('api').user?.isAproved == false){
+      return response.status(400).json({message: 'You have already tried to become a client and you permission was denied'})
+    }
     const producer = kafka.producer();
     await producer.connect();
     await producer.send({
@@ -50,7 +53,6 @@ export default class ClientsController {
       eachMessage: async ({ message}) => {
         if (message.value){
           const status = JSON.parse(message.value.toString())
-          const userId = auth.use('api').user?.id
           const user = await User.findByOrFail('id', userId)
 
           user.isAproved = status.approved
