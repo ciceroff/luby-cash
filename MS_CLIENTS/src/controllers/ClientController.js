@@ -17,7 +17,6 @@ module.exports = {
       zipcode,
       current_balance,
       average_salary,
-      status,
     } = req.body;
 
     try {
