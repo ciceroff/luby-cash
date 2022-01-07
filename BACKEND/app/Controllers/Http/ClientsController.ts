@@ -1,0 +1,62 @@
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import User from 'App/Models/User';
+import { Kafka } from 'kafkajs'
+
+export default class ClientsController {
+  public async store({request, auth}: HttpContextContract){
+    const {
+      full_name,
+      email,
+      phone,
+      cpf_number,
+      address,
+      city,
+      state,
+      zipcode,
+      current_balance,
+      average_salary,
+    } = request.body();
+
+    const kafka = new Kafka({
+      brokers: ['kafka:29092'],
+    });
+
+    const producer = kafka.producer();
+    await producer.connect();
+    await producer.send({
+      topic: 'new-client',
+      messages: [
+        {
+          value: JSON.stringify({
+            full_name: full_name,
+            email: email,
+            phone: phone,
+            cpf_number: cpf_number,
+            address: address,
+            city: city,
+            state: state,
+            zipcode: zipcode,
+            current_balance: current_balance,
+            average_salary: average_salary
+          }),
+        },
+      ],
+    });
+
+    const consumer = kafka.consumer({groupId: 'test-group'})
+    consumer.connect()
+    consumer.subscribe({topic: 'client-status', fromBeginning: true})
+    await consumer.run({
+      eachMessage: async ({ message}) => {
+        if (message.value){
+          const status = JSON.parse(message.value.toString())
+          const userId = auth.use('api').user?.id
+          const user = await User.findByOrFail('id', userId)
+
+          user.isAproved = status.approved
+          await user.save()    
+        }
+      }
+    })
+  }
+}
