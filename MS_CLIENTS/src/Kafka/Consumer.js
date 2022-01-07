@@ -1,7 +1,7 @@
 const { Kafka } = require('kafkajs');
 const Mailer = require('../Mails/mailer');
 const Client = require('../models/Client');
-
+const Producer = require('./Producer');
 class Consumer {
   constructor() {
     const kafka = new Kafka({
@@ -41,6 +41,10 @@ class Consumer {
                 current_balance: client.current_balance,
                 average_salary: client.average_salary,
                 status: 'Approved',
+              });
+              const producer = new Producer();
+              producer.produce('client-status', {
+                approved: true,
               });
 
               return newClient;
