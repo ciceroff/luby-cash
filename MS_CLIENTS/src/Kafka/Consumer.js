@@ -18,16 +18,21 @@ class Consumer {
       eachMessage: async ({ topic, message }) => {
         switch (topic) {
           case 'new-client':
+            const mail = new Mailer();
             var client = JSON.parse(message.value);
 
-            if (await Client.findOne({ where: { cpf_number } }))
+            if (
+              await Client.findOne({ where: { cpf_number: client.cpf_number } })
+            )
               return res.status(400).send({ error: 'CPF Already in use' });
 
-            if (client.average_salary < 500)
+            if (client.average_salary < 500) {
+              mail.newClient(client, 'denied');
               return {
                 Message:
                   'Your solicitation have been denied, you do not have enough salary to be a client',
               };
+            }
             try {
               const newClient = await Client.create({
                 full_name: client.full_name,
@@ -46,7 +51,7 @@ class Consumer {
               producer.produce('client-status', {
                 approved: true,
               });
-
+              mail.newClient(client, newClient.status);
               return newClient;
             } catch (error) {
               return error.detail;
