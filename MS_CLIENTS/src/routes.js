@@ -1,9 +1,9 @@
 const express = require('express');
-const ClientController = require('./controllers/ClientController');
+const ClientsController = require('./controllers/ClientsController');
 const routes = express.Router();
 
-routes.get('/clients', ClientController.index);
-routes.delete('/clients', ClientController.destroy);
-routes.put('/clients', ClientController.update);
+routes.get('/clients', ClientsController.index);
+routes.delete('/clients/:id', ClientsController.destroy);
+routes.put('/clients/:id', ClientsController.update);
 
 module.exports = routes;

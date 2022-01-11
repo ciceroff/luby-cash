@@ -2,8 +2,13 @@ const Client = require('../models/Client');
 
 module.exports = {
   async index(req, res) {
-    const clients = await Client.findAll();
-    return res.json(clients);
+    try {
+      const clients = await Client.findAll();
+
+      return res.json(clients);
+    } catch (error) {
+      return error.detail;
+    }
   },
   async store(req, res) {
     const {
@@ -31,7 +36,6 @@ module.exports = {
         zipcode,
         current_balance,
         average_salary,
-        status,
       });
 
       return res.json(client);

@@ -1,7 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User';
 import { Kafka } from 'kafkajs'
-import Axios from 'axios'
+import axios from 'axios'
 export default class ClientsController {
   public async store({request, response, auth}: HttpContextContract){
     const userId = auth.use('api').user?.id
@@ -62,14 +62,12 @@ export default class ClientsController {
     })
   }
 
-  public async index(){
-    const instance = Axios.create({
-      baseURL: 'localhost:3000'
+  public async index({response}: HttpContextContract){
+    const api = await axios({
+      url: 'http://172.17.0.1:3000/clients',
+      method: 'get',
     }
     )
-
-    instance.get('/clients')
-    .then((response) => { return response })
-    .catch((error) => {return error.detail})
+    response.send(api.data)
   }
 }

@@ -8,7 +8,7 @@ class Client extends Model {
         email: DataTypes.STRING,
         phone: DataTypes.STRING,
         cpf_number: DataTypes.STRING,
-        addres: DataTypes.STRING,
+        address: DataTypes.STRING,
         city: DataTypes.STRING,
         state: DataTypes.STRING,
         zipcode: DataTypes.STRING,

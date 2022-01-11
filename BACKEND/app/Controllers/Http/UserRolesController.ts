@@ -17,7 +17,7 @@ export default class UserRolesController {
       return response.badRequest({'message':'There is no role with this ID!'})
     
     const checkRelation = await Database.query().from('user_roles').where('user_id', user_id).where('role_id',role_id)
-    if(checkRelation.length > 0) return response.badRequest('The user already have this profile type')
+    if(checkRelation.length > 0) return response.badRequest({'message':'The user already have this profile type'})
         
     await user.related('roles').attach([role.id])
     return {message: "User's profile succesfully updated"}
