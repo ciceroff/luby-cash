@@ -90,7 +90,7 @@ export default class ClientsController {
     if(api.status == 200){
       for(let i = 0; i < api.data.length; i++){
         if(api.data[i].cpf_number == user.cpfNumber)
-          return response.send(api.data[i])
+          return response.status(200).send(api.data[i])
       }
      
     }else{
