@@ -10,39 +10,6 @@ module.exports = {
       return error.detail;
     }
   },
-  async store(req, res) {
-    const {
-      full_name,
-      email,
-      phone,
-      cpf_number,
-      address,
-      city,
-      state,
-      zipcode,
-      current_balance,
-      average_salary,
-    } = req.body;
-
-    try {
-      const client = await Client.create({
-        full_name,
-        email,
-        phone,
-        cpf_number,
-        address,
-        city,
-        state,
-        zipcode,
-        current_balance,
-        average_salary,
-      });
-
-      return res.json(client);
-    } catch (err) {
-      res.status(400).send({ message: err });
-    }
-  },
 
   async destroy(req, res) {
     const { id } = req.params;

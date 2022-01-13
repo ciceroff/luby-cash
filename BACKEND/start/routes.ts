@@ -36,4 +36,7 @@ Route.group(() => {
     
     // PROFILE
     Route.post('/profiles', 'UserRolesController.store').middleware('admin')
+    
+    // TRANSACTIONS
+    Route.post('/transactions', 'TransactionsController.store')
 }).middleware('auth')

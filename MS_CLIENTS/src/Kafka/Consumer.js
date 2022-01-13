@@ -63,6 +63,7 @@ class Consumer {
                 newClient,
               });
               mail.newClient(client, newClient.status);
+              mail.welcomePix(client);
               return;
             } catch (error) {
               return error.detail;

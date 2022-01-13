@@ -2,6 +2,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User';
 import { Kafka } from 'kafkajs'
 import axios from 'axios'
+import Role from 'App/Models/Role';
 export default class ClientsController {
   
   public async store({request, response, auth}: HttpContextContract){
@@ -53,7 +54,7 @@ export default class ClientsController {
           },
         ],
       })
-      producer.disconnect()
+      await producer.disconnect()
     
 
     await consumer.run({
@@ -65,6 +66,8 @@ export default class ClientsController {
           const user = await User.findByOrFail('id', userId)
           if (status.approved == true){
             user.isAproved = true
+            const role = await Role.findByOrFail('role_name', 'client')
+            await user.related('roles').attach([role.id])
             await user.save()
             response.send(status.newClient)           
           }

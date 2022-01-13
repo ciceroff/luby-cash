@@ -28,6 +28,22 @@ class Mailer {
         console.log(error);
       });
   }
+
+  welcomePix(user) {
+    this.transporter
+      .sendMail({
+        subject: 'Welcome Pix',
+        from: 'lubycash@gmail.com',
+        to: user.email,
+        html: `<h1>Hello ${user.full_name}!</h1><br> <p>We are happy that you decided to become our client, to start the right way, here are $200 for you to enjoy</p>`,
+      })
+      .then((info) => {
+        console.log(info);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 }
 
 module.exports = Mailer;
