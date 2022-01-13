@@ -1,5 +1,5 @@
 const { Kafka } = require('kafkajs');
-const Mailer = require('../Mails/mailer');
+const Mailer = require('../Mails/Mailer');
 const Client = require('../models/Client');
 const Producer = require('./Producer');
 class Consumer {
@@ -7,31 +7,41 @@ class Consumer {
     const kafka = new Kafka({
       brokers: ['0.0.0.0:9092'],
     });
-    this.consumer = kafka.consumer({ groupId: 'test-group' });
+    this.consumer = kafka.consumer({ groupId: 'ms-clients-group' });
   }
 
   async consume(topic) {
-    let mail = new Mailer();
     await this.consumer.connect();
-    await this.consumer.subscribe({ topic: topic, fromBeginning: true });
+    await this.consumer.subscribe({ topic: topic, fromBeginning: false });
     await this.consumer.run({
       eachMessage: async ({ topic, message }) => {
         switch (topic) {
           case 'new-client':
             const mail = new Mailer();
             var client = JSON.parse(message.value);
-
             if (
               await Client.findOne({ where: { cpf_number: client.cpf_number } })
-            )
-              return res.status(400).send({ error: 'CPF Already in use' });
+            ) {
+              const producer = new Producer();
+              producer.produce('client-status', {
+                approved: null,
+                error: 'CPF Already in use',
+                status: 400,
+              });
 
-            if (client.average_salary < 500) {
+              return;
+            }
+            if (parseFloat(client.average_salary) < 500) {
+              const producer = new Producer();
               mail.newClient(client, 'denied');
-              return {
-                Message:
+              producer.produce('client-status', {
+                approved: false,
+                error:
                   'Your solicitation have been denied, you do not have enough salary to be a client',
-              };
+                status: 400,
+              });
+
+              return;
             }
             try {
               const newClient = await Client.create({
@@ -50,9 +60,10 @@ class Consumer {
               const producer = new Producer();
               producer.produce('client-status', {
                 approved: true,
+                newClient,
               });
               mail.newClient(client, newClient.status);
-              return newClient;
+              return;
             } catch (error) {
               return error.detail;
             }

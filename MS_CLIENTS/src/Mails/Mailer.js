@@ -16,10 +16,10 @@ class Mailer {
   newClient(user, status) {
     this.transporter
       .sendMail({
-        subject: 'Hello',
+        subject: 'Answer to your request to become Client',
         from: 'lubycash@gmail.com',
         to: user.email,
-        html: `<h1>Hello ${user.name}</h1><br> <p>Your CPF have been ${status}!! Thanks for the preference</p>`,
+        html: `<h1>Hello ${user.full_name}!</h1><br> <p>Your CPF have been ${status}!! Thanks for the preference</p>`,
       })
       .then((info) => {
         console.log(info);
@@ -29,3 +29,5 @@ class Mailer {
       });
   }
 }
+
+module.exports = Mailer;

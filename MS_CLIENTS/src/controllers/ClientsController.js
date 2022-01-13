@@ -54,7 +54,6 @@ module.exports = {
       return res.status(400).send({ message: 'Client does not exist' });
     }
   },
-
   async update(req, res) {
     const { id } = req.params;
     const {

@@ -18,5 +18,8 @@ class Producer {
         },
       ],
     });
+    this.producer.disconnect();
   }
 }
+
+module.exports = Producer;
