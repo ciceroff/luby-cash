@@ -61,7 +61,7 @@ export default class ClientsController {
       eachMessage: async ({ message}) => {
         if (message.value){
           const status = JSON.parse(message.value.toString())
-          console.log(status)
+       
           
           const user = await User.findByOrFail('id', userId)
           if (status.approved == true){

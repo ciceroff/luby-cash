@@ -18,7 +18,7 @@ module.exports = {
     if (destroyed) {
       return res.json({ message: `Client ${id} succesfully deleted` });
     } else {
-      return res.status(400).send({ message: 'Client does not exist' });
+      return res.status(400).json({ message: 'Client does not exist' });
     }
   },
   async update(req, res) {
@@ -39,10 +39,10 @@ module.exports = {
 
     const client = await Client.findByPk(id);
     if (!client)
-      return res.status(400).send({ error: 'Client does not exist' });
+      return res.status(400).json({ error: 'Client does not exist' });
 
     if (await Client.findOne({ where: { cpf_number } }))
-      return res.status(400).send({ error: 'CPF Already in use' });
+      return res.status(400).json({ error: 'CPF Already in use' });
 
     try {
       client.full_name = full_name;
@@ -58,7 +58,7 @@ module.exports = {
       client.status = status;
       await client.save();
     } catch (error) {
-      res.status(400).send({ message: error });
+      res.status(400).json({ message: error });
     }
 
     return res.json(client);

@@ -24,7 +24,7 @@ export default class ExtractsController {
       })
 
       if(api.status == 200){
-        console.log('oi')
+  
         try{
           const transaction = await Transaction.create({
             cpfRecipient: cpf_recipient,
