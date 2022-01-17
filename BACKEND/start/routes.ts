@@ -23,6 +23,8 @@ import Route from '@ioc:Adonis/Core/Route'
 
 Route.post('/login','AuthController.login')
 Route.post('/users', 'UsersController.store')
+Route.post('/passwords', 'ForgotPasswordsController.store')
+Route.put('/passwords', 'ForgotPasswordsController.update')
 
 Route.group(() => {
     // CLIENTS

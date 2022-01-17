@@ -10,3 +10,4 @@ app.use(routes);
 app.listen(3000);
 const consumer = new Consumer();
 consumer.consume('new-client');
+consumer.consume('password-recovery');

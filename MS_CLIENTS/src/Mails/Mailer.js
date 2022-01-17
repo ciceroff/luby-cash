@@ -44,6 +44,24 @@ class Mailer {
         console.log(error);
       });
   }
+
+  passwordRecovery(user, token) {
+    this.transporter
+      .sendMail({
+        subject: 'Password Recovery',
+        from: 'lubycash@gmail.com',
+        to: user.email,
+        html: `<strong>Recovering password</strong>
+      <p>We noticed a password recovery attempt coming from this email(${user.email}), if you didn't do it, it is suggested to change the password</p>
+      <p>To continue with the password recovery, use the token: ${token}</p>`,
+      })
+      .then((info) => {
+        console.log(info);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 }
 
 module.exports = Mailer;

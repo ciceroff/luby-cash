@@ -15,9 +15,10 @@ class Consumer {
     await this.consumer.subscribe({ topic: topic, fromBeginning: false });
     await this.consumer.run({
       eachMessage: async ({ topic, message }) => {
+        const mail = new Mailer();
+
         switch (topic) {
           case 'new-client':
-            const mail = new Mailer();
             var client = JSON.parse(message.value);
             if (
               await Client.findOne({ where: { cpf_number: client.cpf_number } })
@@ -83,6 +84,11 @@ class Consumer {
             } catch (error) {
               return error.detail;
             }
+
+          case 'password-recovery':
+            var user = JSON.parse(message.value);
+            mail.passwordRecovery(user, user.token);
+            break;
         }
       },
     });
