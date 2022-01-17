@@ -62,14 +62,13 @@ export default class ClientsController {
         if (message.value){
           const status = JSON.parse(message.value.toString())
        
-          
           const user = await User.findByOrFail('id', userId)
           if (status.approved == true){
             user.isAproved = true
             const role = await Role.findByOrFail('role_name', 'client')
             await user.related('roles').attach([role.id])
             await user.save()
-            response.send(status.newClient)           
+            response.json(status.newClient)           
           }
           if (status.approved == false){
             user.isAproved = false
@@ -85,7 +84,7 @@ export default class ClientsController {
       }
     })
     const api = await axios({
-      url: `http://172.17.0.1:3000/clients/`,
+      url: `http://172.17.0.1:3000/clients?status=Approved`,
       method: 'get'
     })
 
@@ -103,12 +102,13 @@ export default class ClientsController {
   }
   }
 
-  public async index({response}: HttpContextContract){
+  public async index({response, request}: HttpContextContract){
+    const {status, statusDate} = request.qs()
     const api = await axios({
-      url: 'http://172.17.0.1:3000/clients',
+      url: `http://172.17.0.1:3000/clients?status=${status}&statusDate=${statusDate}`,
       method: 'get',
     }
     )
-    response.send(api.data)
+    response.json(api.data)
   }
 }

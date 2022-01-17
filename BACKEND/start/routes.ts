@@ -39,4 +39,5 @@ Route.group(() => {
     
     // TRANSACTIONS
     Route.post('/transactions', 'TransactionsController.store')
+    Route.get('/transactions/:id', 'TransactionsController.index')
 }).middleware('auth')

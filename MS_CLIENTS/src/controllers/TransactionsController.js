@@ -11,13 +11,13 @@ module.exports = {
     });
 
     if (!recipientClient || !senderClient) {
-      res
+      return res
         .status(400)
         .json({ message: 'One of the CPFs owners is not a client' });
     }
 
     if (parseFloat(senderClient.dataValues.current_balance) < value)
-      res.status(400).json({ message: 'You do not have enough money' });
+      return res.status(400).json({ message: 'You do not have enough money' });
 
     const recipientValue = parseFloat(recipientClient.current_balance) + value;
 

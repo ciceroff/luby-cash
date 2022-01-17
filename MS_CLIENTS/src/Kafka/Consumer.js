@@ -34,6 +34,19 @@ class Consumer {
             if (parseFloat(client.average_salary) < 500) {
               const producer = new Producer();
               mail.newClient(client, 'denied');
+              await Client.create({
+                full_name: client.full_name,
+                email: client.email,
+                phone: client.phone,
+                cpf_number: client.cpf_number,
+                address: client.address,
+                city: client.city,
+                state: client.state,
+                zipcode: client.zipcode,
+                current_balance: client.current_balance,
+                average_salary: client.average_salary,
+                status: 'Disapproved',
+              });
               producer.produce('client-status', {
                 approved: false,
                 error:
@@ -44,6 +57,8 @@ class Consumer {
               return;
             }
             try {
+              const temp = parseFloat(client.current_balance) + 200;
+              client.current_balance = temp;
               const newClient = await Client.create({
                 full_name: client.full_name,
                 email: client.email,

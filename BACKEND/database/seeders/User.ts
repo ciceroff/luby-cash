@@ -7,8 +7,7 @@ export default class UserSeeder extends BaseSeeder {
     const user = await User.create({
       email: 'admin@lubycash.com',
       password: 'secret',
-      cpfNumber: '044.058.034-22',
-      isAproved: true
+      cpfNumber: '04405803422'
     })
 
     const role = await Role.create({

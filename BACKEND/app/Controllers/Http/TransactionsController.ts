@@ -42,4 +42,24 @@ export default class ExtractsController {
 
     }
   }
+
+  public async index({request, response}: HttpContextContract){
+    const { id } = request.params()
+    const user = await User.findByOrFail('id', id)
+    const { start, end } = request.qs()
+    
+    if(!user)
+      return response.status(400).json({message: 'There is no user with this id!'})
+
+    if(start && end){
+      const userTransactions = await Transaction.query().select('*').where('cpf_sender', user.cpfNumber)
+      .orWhere('cpf_recipient', user.cpfNumber)
+      .whereBetween('created_at',[start, end])
+      return response.json(userTransactions)
+    }
+
+    const userTransactions = await Transaction.query().select('*').where('cpf_sender', user.cpfNumber).orWhere('cpf_recipient', user.cpfNumber)
+
+    return response.json(userTransactions)
+  } 
 }
