@@ -68,35 +68,33 @@ export default class ClientsController {
             const role = await Role.findByOrFail('role_name', 'client')
             await user.related('roles').attach([role.id])
             await user.save()
-            response.json(status.newClient)           
           }
           if (status.approved == false){
             user.isAproved = false
             await user.save()
-            response.status(400).json({message: status.error.toString()})
           }
-
-          if(status.approved == null)
-            response.status(400).json({message: status.error.toString()})
-          
-          
         }
       }
     })
+    await consumer.disconnect()
     const api = await axios({
-      url: `http://172.17.0.1:3000/clients?status=Approved`,
+      url: `http://172.17.0.1:3000/clients?status=undefined&statusDate=undefined`,
       method: 'get'
     })
 
-    
     if(api.status == 200){
       for(let i = 0; i < api.data.length; i++){
-        if(api.data[i].cpf_number == user.cpfNumber)
+        if(api.data[i].cpf_number == user.cpfNumber && api.data[i].status == 'Approved'){
+          const role = await Role.findByOrFail('role_name', 'client')
+          await user.related('roles').attach([role.id])
+          user.isAproved = true
+          await user.save()
           return response.status(200).send(api.data[i])
+        }
       }
-     
-    }else{
-      return response.status(400).json({message: 'You do not have enough salary to become an client'})
+      user.isAproved = false
+      await user.save()
+      return response.status(400).json({message: 'You do not have enough salary to become a client'})
     }
     
   }

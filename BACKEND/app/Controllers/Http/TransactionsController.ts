@@ -13,7 +13,7 @@ export default class ExtractsController {
     }
     
     if(recipient['$attributes'].isAproved == true && sender['$attributes'].isAproved == true ){
-      const api = await axios({
+      await axios({
         url: `http://172.17.0.1:3000/pix`,
         method: 'post',
         data: {
@@ -21,24 +21,22 @@ export default class ExtractsController {
           sender: sender.cpfNumber,
           value: value
         }
-      })
-
-      if(api.status == 200){
-  
+      }).then(async () => {
         try{
           const transaction = await Transaction.create({
             cpfRecipient: cpf_recipient,
             cpfSender: sender.cpfNumber,
             value
           })
-          return transaction
+          return response.json(transaction)
         }catch(error){
           return error.detail
         }
-      }else{
-        return response.status(api.status).json(api.data)
       }
-      
+      ).catch(
+        ()=>{
+          return response.status(400).json({message: 'Something went wrong, please check you current balance'})
+        })
 
     }
   }
